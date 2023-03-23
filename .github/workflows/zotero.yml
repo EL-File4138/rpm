@@ -1,5 +1,6 @@
 name: zotero
 on:
+  workflow_dispatch:
   push:
     paths:
       - zotero/**
