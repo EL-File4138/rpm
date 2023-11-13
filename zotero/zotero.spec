@@ -3,7 +3,7 @@
 %global __provides_exclude_from %{_libdir}/%{name}
 
 Name:		zotero
-Version:	6.0.27
+Version:	6.0.30
 Release:	2%{?dist}
 Summary:	Zotero desktop application
 
@@ -40,5 +40,7 @@ install -Dm644 %{buildroot}%{_libdir}/%{name}/chrome/icons/default/default256.pn
 %{_datadir}/icons/hicolor/*/apps/zotero.png
 
 %changelog
+* Mon Nov 13 2023 Matrew File <elfile4138@outlook.com> - 6.0.30
+- Upstream update.
 * Wed Mar 22 2023 Matrew File <elfile4138@outlook.com> - 6.0.23
 - Initial package.
