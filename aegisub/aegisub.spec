@@ -5,8 +5,8 @@
 %global         gitdate         20241010
 
 Name:           aegisub
-Version:        3.3.4
-Release:        11.%{gitdate}%{?dist}
+Version:        3.3.4.11.%{gitdate}
+Release:        1%{?dist}
 Summary:        Tool for creating and modifying subtitles
 License:        BSD and MIT and MPLv1.1
 URL:            https://github.com/%{gituser}/%{gitname}
