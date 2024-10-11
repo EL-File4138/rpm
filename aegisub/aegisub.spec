@@ -11,6 +11,9 @@ Summary:        Tool for creating and modifying subtitles
 License:        BSD and MIT and MPLv1.1
 URL:            https://github.com/%{gituser}/%{gitname}
 
+Source0:        %{url}/archive/%{commit}/%{gitname}-%{shortcommit}.tar.gz
+Source1:        https://github.com/EL-File4138/rpm/raw/refs/heads/master/aegisub/wrapper.sh
+
 ExcludeArch:    %{power64} %{ix86} %{arm}
 
 BuildRequires:  git
@@ -47,6 +50,8 @@ git clone https://github.com/%{gituser}/%{gitname}.git
 cd %{gitname}
 git checkout %{commit}
 
+cp %{SOURCE1} wrapper.sh
+
 %build
 cd %{gitname}
 mkdir -p build
@@ -57,6 +62,9 @@ ninja -C build
 cd %{gitname}
 DESTDIR=%{buildroot} meson install -C build
 
+mkdir -p %{buildroot}%{_prefix}/local/bin
+install -m 755 wrapper.sh %{buildroot}%{_prefix}/local/bin/aegisub
+
 %files
 # Application Desktop Entry
 %{_datadir}/applications/aegisub.desktop
@@ -66,6 +74,7 @@ DESTDIR=%{buildroot} meson install -C build
 %{_datadir}/locale/*/LC_MESSAGES/aegisub.mo
 # Executable
 %{_bindir}/aegisub
+%{_prefix}/local/bin/aegisub
 # Automation Autoload Scripts
 %{_datadir}/aegisub/automation/*
 # Application Icons
