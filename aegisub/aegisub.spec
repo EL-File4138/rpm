@@ -32,6 +32,8 @@ BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  wxGTK-devel
 BuildRequires:  libGL-devel
 BuildRequires:  libX11-devel
+BuildRequires:  uchardet-devel
+BuildRequires:  jansson-devel
 
 %description
 Aegisub is an advanced subtitle editor which assists in the creation of subtitles,
