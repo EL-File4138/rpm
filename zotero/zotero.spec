@@ -12,7 +12,8 @@ URL:		https://www.zotero.org
 Source0:	https://download.zotero.org/client/release/%{version}/Zotero-%{version}_linux-x86_64.tar.bz2
 Source1:	zotero.desktop
 
-BuildArch:	x86_64
+ExclusiveArch: x86_64
+
 
 %description
 Zotero is a free, easy-to-use tool to help you collect, organize, cite, and share research.
