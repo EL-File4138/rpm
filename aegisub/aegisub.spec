@@ -1,11 +1,11 @@
 %global         gituser         arch1t3cht
 %global         gitname         Aegisub
-%global         commit          bf20c62e6b3d88a3e425fc05d26fd2b40e652775
+%global         commit          8165f1ad5ec8b5f3c56e0c3b19b8126f581abd58
 %global         shortcommit     %(c=%{commit}; echo ${c:0:8})
-%global         gitdate         20241010
+%global         gitdate         20241110
 
 Name:           aegisub
-Version:        3.3.4.11.%{gitdate}
+Version:        3.3.4.12.%{gitdate}
 Release:        1%{?dist}
 Summary:        Tool for creating and modifying subtitles
 License:        BSD and MIT and MPLv1.1
@@ -81,5 +81,7 @@ install -m 755 wrapper.sh %{buildroot}%{_prefix}/local/bin/aegisub
 %{_datadir}/icons/hicolor/*/apps/aegisub.*
 
 %changelog
-* Thu Oct 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4-11.20241010
+* Sun Nov 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241110
+- Update to upstream Feature Release 12 Build.
+* Thu Oct 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.11.20241010
 - Initial Build
