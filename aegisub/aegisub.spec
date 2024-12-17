@@ -1,6 +1,6 @@
 %global         gituser         arch1t3cht
 %global         gitname         Aegisub
-%global         commit          8165f1ad5ec8b5f3c56e0c3b19b8126f581abd58
+%global         commit          7db477c3ed31389e678844dde54f032fd1603fea
 %global         shortcommit     %(c=%{commit}; echo ${c:0:8})
 %global         gitdate         20241110
 
@@ -81,6 +81,8 @@ install -m 755 wrapper.sh %{buildroot}%{_prefix}/local/bin/aegisub
 %{_datadir}/icons/hicolor/*/apps/aegisub.*
 
 %changelog
+* Tue Dec 17 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241217
+- Follow upstream.
 * Sun Nov 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241110
 - Update to upstream Feature Release 12 Build.
 * Thu Oct 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.11.20241010
