@@ -1,11 +1,11 @@
-%global         gituser         arch1t3cht
+%global         gituser         TypesettingTools
 %global         gitname         Aegisub
-%global         commit          7db477c3ed31389e678844dde54f032fd1603fea
+%global         commit          b0fc741099f610ee9486bfaf0186d39f74b8d756
 %global         shortcommit     %(c=%{commit}; echo ${c:0:8})
 %global         gitdate         20241110
 
 Name:           aegisub
-Version:        3.3.4.12.%{gitdate}
+Version:        3.4.0
 Release:        1%{?dist}
 Summary:        Tool for creating and modifying subtitles
 License:        BSD and MIT and MPLv1.1
@@ -36,14 +36,15 @@ BuildRequires:  wxGTK-devel
 BuildRequires:  libGL-devel
 BuildRequires:  libX11-devel
 BuildRequires:  uchardet-devel
+BuildRequires:  openal-soft-devel
+BuildRequires:  libcurl-devel
 BuildRequires:  jansson-devel
+BuildRequires:  libappstream-glib
 
 %description
 Aegisub is an advanced subtitle editor which assists in the creation of subtitles,
 timing, and editing of subtitle files. It supports a wide range of formats and
 provides powerful visual typesetting tools.
-This is arch1t3cht's fork, and is actively following for the most recent development
-that has a CI success.
 
 %prep
 git clone https://github.com/%{gituser}/%{gitname}.git
@@ -52,35 +53,43 @@ git checkout %{commit}
 
 cp %{SOURCE1} wrapper.sh
 
+mkdir -p build
+
+meson subprojects download gtest
+
 %build
 cd %{gitname}
-mkdir -p build
-meson setup build --buildtype=release --prefix=/usr
-ninja -C build
+%meson
+%meson_build
 
 %install
 cd %{gitname}
-DESTDIR=%{buildroot} meson install -C build
+%meson_install
 
 mkdir -p %{buildroot}%{_prefix}/local/bin
-install -m 755 wrapper.sh %{buildroot}%{_prefix}/local/bin/aegisub
+install -m 755 wrapper.sh %{buildroot}%{_prefix}/local/bin/%{name}
+
+desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
+appstream-util validate-relax --nonet %{buildroot}/%{_metainfodir}/%{name}.appdata.xml
 
 %files
 # Application Desktop Entry
-%{_datadir}/applications/aegisub.desktop
+%{_datadir}/applications/%{name}.desktop
 # AppData
-%{_datadir}/metainfo/aegisub.appdata.xml
+%{_metainfodir}/%{name}.appdata.xml
 # Translations
-%{_datadir}/locale/*/LC_MESSAGES/aegisub.mo
+%{_datadir}/locale/*/LC_MESSAGES/%{name}.mo
 # Executable
-%{_bindir}/aegisub
-%{_prefix}/local/bin/aegisub
+%{_bindir}/%{name}*
+%{_prefix}/local/bin/%{name}
 # Automation Autoload Scripts
-%{_datadir}/aegisub/automation/*
+%{_datadir}/%{name}/automation/*
 # Application Icons
-%{_datadir}/icons/hicolor/*/apps/aegisub.*
+%{_datadir}/icons/hicolor/*/apps/%{name}.*
 
 %changelog
+* Thu Dec 19 2024 Matrew File <elfile4138@elfile4138.moe> - 3.4.0
+- Rebase to new major upstream.
 * Tue Dec 17 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241217
 - Follow upstream.
 * Sun Nov 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241110
