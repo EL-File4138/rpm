@@ -2,7 +2,7 @@
 %global         gitname         Aegisub
 %global         commit          7db477c3ed31389e678844dde54f032fd1603fea
 %global         shortcommit     %(c=%{commit}; echo ${c:0:8})
-%global         gitdate         20241110
+%global         gitdate         20241224
 
 Name:           aegisub
 Version:        3.3.4.12.%{gitdate}
