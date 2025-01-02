@@ -1,17 +1,14 @@
 %global         gituser         TypesettingTools
-%global         gitname         Aegisub
-%global         commit          b0fc741099f610ee9486bfaf0186d39f74b8d756
-%global         shortcommit     %(c=%{commit}; echo ${c:0:8})
-%global         gitdate         20241110
+%global         altname         aegisub
 
-Name:           aegisub
-Version:        3.4.0
+Name:           Aegisub
+Version:        3.4.1
 Release:        1%{?dist}
 Summary:        Tool for creating and modifying subtitles
 License:        BSD and MIT and MPLv1.1
-URL:            https://github.com/%{gituser}/%{gitname}
+URL:            https://github.com/%{gituser}/%{name}
 
-Source0:        %{url}/archive/%{commit}/%{gitname}-%{shortcommit}.tar.gz
+Source0:        %{url}/releases/download/v%{version}/%{name}-%{version}.tar.xz
 Source1:        https://github.com/EL-File4138/rpm/raw/refs/heads/master/aegisub/wrapper.sh
 
 ExcludeArch:    %{power64} %{ix86} %{arm}
@@ -41,6 +38,7 @@ BuildRequires:  openal-soft-devel
 BuildRequires:  libcurl-devel
 BuildRequires:  jansson-devel
 BuildRequires:  gtest-devel
+BuildRequires:  gmock-devel
 
 %description
 Aegisub is an advanced subtitle editor which assists in the creation of subtitles,
@@ -48,50 +46,37 @@ timing, and editing of subtitle files. It supports a wide range of formats and
 provides powerful visual typesetting tools.
 
 %prep
-git clone https://github.com/%{gituser}/%{gitname}.git
-cd %{gitname}
-git checkout %{commit}
+%autosetup
 
 cp %{SOURCE1} wrapper.sh
 
-mkdir -p build
-
 %build
-cd %{gitname}
 %meson
 %meson_build
 
 %install
-cd %{gitname}
 %meson_install
 
 mkdir -p %{buildroot}%{_prefix}/local/bin
-install -m 755 wrapper.sh %{buildroot}%{_prefix}/local/bin/%{name}
+install -m 755 wrapper.sh %{buildroot}%{_prefix}/local/bin/%{altname}
 
-desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
-appstream-util validate-relax --nonet %{buildroot}/%{_metainfodir}/%{name}.metainfo.xml
+desktop-file-validate %{buildroot}%{_datadir}/applications/org.%{altname}.%{name}.desktop
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/org.%{altname}.%{name}.metainfo.xml
 
 %files
 # Application Desktop Entry
-%{_datadir}/applications/%{name}.desktop
+%{_datadir}/applications/org.%{altname}.%{name}.desktop
 # metainfo
-%{_metainfodir}/%{name}.metainfo.xml
+%{_metainfodir}/org.%{altname}.%{name}.metainfo.xml
 # Translations
-%{_datadir}/locale/*/LC_MESSAGES/%{name}.mo
+%{_datadir}/locale/*/LC_MESSAGES/%{altname}.mo
 # Executable
-%{_bindir}/%{name}*
-%{_prefix}/local/bin/%{name}
+%{_bindir}/%{altname}*
+%{_prefix}/local/bin/%{altname}
 # Automation Autoload Scripts
-%{_datadir}/%{name}/automation/*
+%{_datadir}/%{altname}/automation/*
 # Application Icons
-%{_datadir}/icons/hicolor/*/apps/%{name}.*
+%{_datadir}/icons/hicolor/*/apps/org.%{altname}.%{name}.*
 
 %changelog
-* Thu Dec 19 2024 Matrew File <elfile4138@elfile4138.moe> - 3.4.0
-- Rebase to new major upstream.
-* Tue Dec 17 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241217
-- Follow upstream.
-* Sun Nov 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241110
-- Update to upstream Feature Release 12 Build.
-* Thu Oct 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.11.20241010
-- Initial Build
+%autochangelog
