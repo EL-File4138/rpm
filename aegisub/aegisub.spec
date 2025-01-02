@@ -18,6 +18,7 @@ ExcludeArch:    %{power64} %{ix86} %{arm}
 
 BuildRequires:  git
 BuildRequires:  desktop-file-utils
+BuildRequires:  libappstream-glib
 BuildRequires:  gcc-c++
 BuildRequires:  meson
 BuildRequires:  ninja-build
@@ -39,7 +40,7 @@ BuildRequires:  uchardet-devel
 BuildRequires:  openal-soft-devel
 BuildRequires:  libcurl-devel
 BuildRequires:  jansson-devel
-BuildRequires:  libappstream-glib
+BuildRequires:  gtest-devel
 
 %description
 Aegisub is an advanced subtitle editor which assists in the creation of subtitles,
@@ -55,8 +56,6 @@ cp %{SOURCE1} wrapper.sh
 
 mkdir -p build
 
-meson subprojects download gtest
-
 %build
 cd %{gitname}
 %meson
@@ -70,13 +69,13 @@ mkdir -p %{buildroot}%{_prefix}/local/bin
 install -m 755 wrapper.sh %{buildroot}%{_prefix}/local/bin/%{name}
 
 desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
-appstream-util validate-relax --nonet %{buildroot}/%{_metainfodir}/%{name}.appdata.xml
+appstream-util validate-relax --nonet %{buildroot}/%{_metainfodir}/%{name}.metainfo.xml
 
 %files
 # Application Desktop Entry
 %{_datadir}/applications/%{name}.desktop
-# AppData
-%{_metainfodir}/%{name}.appdata.xml
+# metainfo
+%{_metainfodir}/%{name}.metainfo.xml
 # Translations
 %{_datadir}/locale/*/LC_MESSAGES/%{name}.mo
 # Executable
