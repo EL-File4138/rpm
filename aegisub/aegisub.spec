@@ -9,9 +9,9 @@ License:        BSD and MIT and MPLv1.1
 URL:            https://github.com/%{gituser}/%{name}
 
 Source0:        %{url}/releases/download/v%{version}/%{name}-%{version}.tar.xz
-Source1:        https://github.com/EL-File4138/rpm/raw/refs/heads/master/aegisub/wrapper.sh
 
-ExcludeArch:    %{power64} %{ix86} %{arm}
+# LuaJIT is not available on Power64
+ExcludeArch:    %{power64}
 
 BuildRequires:  git
 BuildRequires:  desktop-file-utils
@@ -48,17 +48,12 @@ provides powerful visual typesetting tools.
 %prep
 %autosetup
 
-cp %{SOURCE1} wrapper.sh
-
 %build
 %meson
 %meson_build
 
 %install
 %meson_install
-
-mkdir -p %{buildroot}%{_prefix}/local/bin
-install -m 755 wrapper.sh %{buildroot}%{_prefix}/local/bin/%{altname}
 
 desktop-file-validate %{buildroot}%{_datadir}/applications/org.%{altname}.%{name}.desktop
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/org.%{altname}.%{name}.metainfo.xml
@@ -72,7 +67,6 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/org.%{altname}
 %{_datadir}/locale/*/LC_MESSAGES/%{altname}.mo
 # Executable
 %{_bindir}/%{altname}*
-%{_prefix}/local/bin/%{altname}
 # Automation Autoload Scripts
 %{_datadir}/%{altname}/automation/*
 # Application Icons
