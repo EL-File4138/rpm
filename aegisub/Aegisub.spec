@@ -29,7 +29,7 @@ BuildRequires:  luajit-devel
 BuildRequires:  portaudio-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  wxGTK-devel
-BuildRequires:  libGL-devel
+BuildRequires:  mesa-libGL-devel
 BuildRequires:  libX11-devel
 BuildRequires:  uchardet-devel
 BuildRequires:  openal-soft-devel
