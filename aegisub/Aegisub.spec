@@ -5,13 +5,11 @@ Name:           Aegisub
 Version:        3.4.1
 Release:        1%{?dist}
 Summary:        Tool for creating and modifying subtitles
-License:        BSD and MIT and MPLv1.1
+# Main project is under BSD-3-Clause, some historical code is under ISC, and a few MIT
+License:        BSD-3-Clause AND ISC AND MIT
 URL:            https://github.com/%{gituser}/%{name}
 
 Source0:        %{url}/releases/download/v%{version}/%{name}-%{version}.tar.xz
-
-# LuaJIT is not available on Power64
-ExcludeArch:    %{power64}
 
 BuildRequires:  git
 BuildRequires:  desktop-file-utils
@@ -41,12 +39,19 @@ BuildRequires:  gtest-devel
 BuildRequires:  gmock-devel
 
 %description
-Aegisub is an advanced subtitle editor which assists in the creation of subtitles,
-timing, and editing of subtitle files. It supports a wide range of formats and
-provides powerful visual typesetting tools.
+Aegisub is an advanced subtitle editor which assists in the creation of
+subtitles, timing, and editing of subtitle files. It supports a wide range
+of formats and provides powerful visual typesetting tools.
 
 %prep
 %autosetup
+# Strip out unused bundled library
+# Remaining `luabins` is not included in Fedora Package registry, and does not provide additional shared library
+find subprojects/ -mindepth 1 ! -path "subprojects/luabins*" -exec rm -rf {} +
+# Strip unused packaging artifacts for other platform, which contains GPL code
+rm -rf packages/{osx_bundle,osx_dmg,win_installer}
+rm -rf tools/{osx-*,apply-manifest.py,*.ps1}
+rm -rf osx-bundle.sed
 
 %build
 %meson
@@ -55,22 +60,24 @@ provides powerful visual typesetting tools.
 %install
 %meson_install
 
+%find_lang %{altname}
+
 desktop-file-validate %{buildroot}%{_datadir}/applications/org.%{altname}.%{name}.desktop
 appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/org.%{altname}.%{name}.metainfo.xml
 
-%files
+%files -f %{altname}.lang
 # Application Desktop Entry
 %{_datadir}/applications/org.%{altname}.%{name}.desktop
 # metainfo
 %{_metainfodir}/org.%{altname}.%{name}.metainfo.xml
-# Translations
-%{_datadir}/locale/*/LC_MESSAGES/%{altname}.mo
 # Executable
 %{_bindir}/%{altname}*
-# Automation Autoload Scripts
-%{_datadir}/%{altname}/automation/*
+# Plugins
+%{_datadir}/%{altname}/
 # Application Icons
 %{_datadir}/icons/hicolor/*/apps/org.%{altname}.%{name}.*
+# License
+%license LICENCE
 
 %changelog
 %autochangelog
