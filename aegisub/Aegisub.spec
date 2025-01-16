@@ -2,7 +2,7 @@
 %global         altname         aegisub
 
 Name:           Aegisub
-Version:        3.4.1
+Version:        3.4.2
 Release:        1%{?dist}
 Summary:        Tool for creating and modifying subtitles
 # Main project is under BSD-3-Clause, some historical code is under ISC, and a few MIT
