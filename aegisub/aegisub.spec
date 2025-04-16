@@ -6,7 +6,7 @@
 
 Name:           aegisub
 Version:        3.3.4.12.%{gitdate}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Tool for creating and modifying subtitles
 License:        BSD and MIT and MPLv1.1
 URL:            https://github.com/%{gituser}/%{gitname}
@@ -15,6 +15,9 @@ Source0:        %{url}/archive/%{commit}/%{gitname}-%{shortcommit}.tar.gz
 Source1:        https://github.com/EL-File4138/rpm/raw/refs/heads/master/aegisub/wrapper.sh
 
 ExcludeArch:    %{power64} %{ix86} %{arm}
+
+# Optional: BestSource
+Requires: xxhash-libs
 
 BuildRequires:  git
 BuildRequires:  desktop-file-utils
@@ -33,10 +36,18 @@ BuildRequires:  luajit-devel
 BuildRequires:  portaudio-devel
 BuildRequires:  pulseaudio-libs-devel
 BuildRequires:  wxGTK-devel
-BuildRequires:  libGL-devel
+# Additional fix
+BuildRequires:  mesa-libGL-devel
 BuildRequires:  libX11-devel
 BuildRequires:  uchardet-devel
+BuildRequires:  openal-soft-devel
+BuildRequires:  libcurl-devel
 BuildRequires:  jansson-devel
+# Optional: BestSource
+BuildRequires:  xxhash-devel
+# Testing
+BuildRequires:  gtest-devel
+BuildRequires:  gmock-devel
 
 %description
 Aegisub is an advanced subtitle editor which assists in the creation of subtitles,
@@ -55,7 +66,7 @@ cp %{SOURCE1} wrapper.sh
 %build
 cd %{gitname}
 mkdir -p build
-meson setup build --buildtype=release --prefix=/usr
+meson setup build --buildtype=release --prefix=/usr -Dbestsource=enabled
 ninja -C build
 
 %install
@@ -79,11 +90,18 @@ install -m 755 wrapper.sh %{buildroot}%{_prefix}/local/bin/aegisub
 %{_datadir}/aegisub/automation/*
 # Application Icons
 %{_datadir}/icons/hicolor/*/apps/aegisub.*
+# Bestsource related
+%dir %{_includedir}/bestsource
+%{_includedir}/bestsource/*
+%{_libdir}/libbestsource.so
+%{_libdir}/pkgconfig/bestsource.pc
 
 %changelog
-* Tue Dec 17 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241217
+* Wed Apr 16 2025 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241217-2
+- Enable Bestsource.
+* Tue Dec 17 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241217-1
 - Follow upstream.
-* Sun Nov 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241110
+* Sun Nov 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241110-1
 - Update to upstream Feature Release 12 Build.
-* Thu Oct 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.11.20241010
+* Thu Oct 10 2024 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.11.20241010-1
 - Initial Build
