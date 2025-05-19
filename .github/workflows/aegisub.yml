@@ -10,7 +10,7 @@ on:
 jobs:
   copr:
     name: copr
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
       - name: Setup
         run: |
