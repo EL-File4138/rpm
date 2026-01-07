@@ -1,8 +1,8 @@
 %global         gituser         arch1t3cht
 %global         gitname         Aegisub
-%global         commit          9c9a0a8dfbb1e31da50c0791cdaf1f2ae590a586
+%global         commit          168b6f679db0cd3f622aa76e77fb2703e2766537
 %global         shortcommit     %(c=%{commit}; echo ${c:0:8})
-%global         gitdate         20251218
+%global         gitdate         20260106
 
 Name:           aegisub
 Version:        3.4.9.%{gitdate}
@@ -85,6 +85,8 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/org.%{name}.%{
 %license LICENCE
 
 %changelog
+* Wed Jan 07 2026 Matrew File <elfile4138@elfile4138.moe> - 3.4.9.20260106-1
+- Update to upstream Migration Release 02 Build.
 * Thu Dec 18 2025 Matrew File <elfile4138@elfile4138.moe> - 3.4.9.20251218-1
 - Update to upstream Migration Release 01 Build.
 * Wed Apr 16 2025 Matrew File <elfile4138@elfile4138.moe> - 3.3.4.12.20241217-2
