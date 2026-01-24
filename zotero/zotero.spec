@@ -1,15 +1,15 @@
 %define debug_package %{nil}
-%define __requires_exclude ^(libclearkey|libfreeblpriv3|liblgpllibs|libmozavcodec|libmozavutil|libmozgtk|libmozsandbox|libmozsqlite3|libmozwayland|libnspr4|libnss3|libnssckbi|libnssdbm3|libnssutil3|libplc4|libsmime3|libsoftokn3|libssl3|libxul)\.so
+%define __requires_exclude ^(libclearkey|libfreeblpriv3|liblgpllibs|libmozavcodec|libmozavutil|libmozgtk|libmozsandbox|libmozsqlite3|libmozwayland|libnspr4|libnss3|libnssckbi|libnssdbm3|libnssutil3|libplc4|libsmime3|libsoftokn3|libssl3|libxul|libgkcodecs)\.so
 %global __provides_exclude_from %{_libdir}/%{name}
 
 Name:		zotero
-Version:	7.0.30
+Version:	8.0
 Release:	1%{?dist}
 Summary:	Zotero desktop application
 
 License:	AGPLv3
 URL:		https://www.zotero.org
-Source0:	https://download.zotero.org/client/release/%{version}/Zotero-%{version}_linux-x86_64.tar.bz2
+Source0:	https://download.zotero.org/client/release/%{version}/Zotero-%{version}_linux-x86_64.tar.xz
 Patch0:	    desktop.patch
 
 ExclusiveArch: x86_64
@@ -39,6 +39,8 @@ install -Dm644 %{buildroot}%{_libdir}/%{name}/icons/icon128.png %{buildroot}%{_d
 %{_datadir}/icons/hicolor/*/apps/zotero.png
 
 %changelog
+* Sat Jan 24 2026 Matrew File <elfile4138@elfile4138.moe> - 8.0
+- Upstream update to Zotero 8.
 * Sun Oct 13 2024 Matrew File <elfile4138@elfile4138.moe> - 7.0.7
 - Upstream update to Zotero 7.
 - Fix Spec error.
