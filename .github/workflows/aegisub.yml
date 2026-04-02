@@ -23,7 +23,7 @@ jobs:
       - name: Build
         id: build
         run: |
-          copr-cli --config <(echo "${COPR_CLI_CONFIG}") buildscm --clone-url "https://github.com/${{github.repository}}" --commit "${{github.sha}}" --subdir "${BUILD_DIR}" --spec "${BUILD_PACKAGE}.spec" --type git --method rpkg "${BUILD_REPO}" | sed -u 's/^Created builds: /::set-output name=build_id::/g'
+          copr-cli --config <(echo "${COPR_CLI_CONFIG}") buildscm --clone-url "https://github.com/${{github.repository}}" --commit "${{github.sha}}" --subdir "${BUILD_DIR}" --spec "${BUILD_PACKAGE}.spec" --type git --method rpkg "${BUILD_REPO}" | sed -n 's/^Created builds: /build_id=/p' | tr -d ',' >> "${GITHUB_OUTPUT}"
         env:
           COPR_CLI_CONFIG: ${{secrets.COPR_CLI_CONFIG}}
           BUILD_REPO: el-file4138/vapoursynth-classic

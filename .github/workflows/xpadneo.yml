@@ -1,0 +1,39 @@
+name: xpadneo
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - master
+    paths:
+      - xpadneo/**
+
+jobs:
+  copr:
+    name: copr (${{ matrix.package }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - package: xpadneo
+            build_dir: xpadneo/xpadneo
+            spec_file: xpadneo.spec
+          - package: xpadneo-kmod
+            build_dir: xpadneo/xpadneo-kmod
+            spec_file: xpadneo-kmod.spec
+    env:
+      COPR_CLI_CONFIG: ${{secrets.COPR_CLI_CONFIG}}
+      BUILD_REPO: el-file4138/xpadneo
+    steps:
+      - name: Setup
+        run: |
+          pip3 install -I copr-cli==1.105
+      - name: Login
+        run: |
+          copr-cli --config <(echo "${COPR_CLI_CONFIG}") whoami
+        env:
+          COPR_CLI_CONFIG: ${{secrets.COPR_CLI_CONFIG}}
+      - name: Build
+        id: build
+        run: |
+          copr-cli --config <(printf '%s' "${COPR_CLI_CONFIG}") buildscm --clone-url "https://github.com/${{github.repository}}" --commit "${{github.sha}}" --subdir "${{ matrix.build_dir }}" --spec "${{ matrix.spec_file }}" --type git --method rpkg "${BUILD_REPO}" | sed -n 's/^Created builds: /build_id=/p' | tr -d ',' >> "${GITHUB_OUTPUT}"
