@@ -1,8 +1,8 @@
 %global         gituser         arch1t3cht
 %global         gitname         Aegisub
-%global         commit          168b6f679db0cd3f622aa76e77fb2703e2766537
+%global         commit          e79aa896bd676400c2fbbb9e625bc58b491358da
 %global         shortcommit     %(c=%{commit}; echo ${c:0:8})
-%global         gitdate         20260106
+%global         gitdate         20260503
 
 Name:           aegisub
 Version:        3.4.9.%{gitdate}
@@ -40,6 +40,7 @@ BuildRequires:  pkgconfig(luajit)
 BuildRequires:  pkgconfig(openal)
 BuildRequires:  pkgconfig(portaudio-2.0)
 BuildRequires:  pkgconfig(uchardet)
+BuildRequires:  pkgconfig(libportal-gtk3)
 
 Requires: hicolor-icon-theme
 
@@ -85,6 +86,8 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/org.%{name}.%{
 %license LICENCE
 
 %changelog
+* Fri May 29 2026 Matrew File <elfile4138@elfile4138.moe> - 3.4.9.20260529-1
+- Update to upstream Migration Release 03 Build.
 * Wed Jan 07 2026 Matrew File <elfile4138@elfile4138.moe> - 3.4.9.20260106-1
 - Update to upstream Migration Release 02 Build.
 * Thu Dec 18 2025 Matrew File <elfile4138@elfile4138.moe> - 3.4.9.20251218-1
