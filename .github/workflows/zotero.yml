@@ -15,6 +15,10 @@ on:
       - master
     paths:
       - zotero/**
+      - .github/workflows/zotero.yml
+
+permissions:
+  contents: read
 
 jobs:
   copr:
@@ -31,8 +35,20 @@ jobs:
           COPR_CLI_CONFIG: ${{secrets.COPR_CLI_CONFIG}}
       - name: Build
         id: build
+        shell: bash
         run: |
-          copr-cli --config <(echo "${COPR_CLI_CONFIG}") buildscm --clone-url "https://github.com/${{github.repository}}" --commit "${BUILD_COMMIT}" --subdir "${BUILD_DIR}" --spec "${BUILD_PACKAGE}.spec" --type git --method rpkg "${BUILD_REPO}" | sed -n 's/^Created builds: /build_id=/p' | tr -d ',' >> "${GITHUB_OUTPUT}"
+          set -euo pipefail
+          config=$(mktemp)
+          trap 'rm -f "$config"' EXIT
+          chmod 600 "$config"
+          printf '%s' "$COPR_CLI_CONFIG" > "$config"
+          output=$(copr-cli --config "$config" buildscm --clone-url "https://github.com/${GITHUB_REPOSITORY}" --commit "$BUILD_COMMIT" --subdir "$BUILD_DIR" --spec "$BUILD_PACKAGE.spec" --type git --method rpkg "$BUILD_REPO")
+          printf '%s\n' "$output"
+          ids=$(printf '%s\n' "$output" | sed -n 's/^Created builds: //p' | tr ',' ' ')
+          [[ "$ids" =~ ^[[:space:]]*[0-9]+([[:space:]]+[0-9]+)*[[:space:]]*$ ]] || { echo 'Copr returned no valid build IDs' >&2; exit 1; }
+          echo "build_id=$ids" >> "$GITHUB_OUTPUT"
+          read -r -a builds <<< "$ids"
+          copr-cli --config "$config" watch-build "${builds[@]}"
         env:
           BUILD_COMMIT: ${{ inputs.commit || github.sha }}
           COPR_CLI_CONFIG: ${{secrets.COPR_CLI_CONFIG}}
