@@ -1,0 +1,93 @@
+name: Update monitored release
+
+on:
+  repository_dispatch:
+    types: [anitya-release]
+  workflow_dispatch:
+    inputs:
+      package:
+        description: Package to update
+        required: true
+        type: choice
+        options: [zotero, xpadneo, aegisub]
+      version:
+        description: Upstream version (optional leading v)
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: update-monitored-release
+  queue: max
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    outputs:
+      package: ${{ steps.release.outputs.package }}
+      changed: ${{ steps.update.outputs.changed }}
+      commit: ${{ steps.commit.outputs.commit }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Install RPM version comparison support
+        run: sudo apt-get update && sudo apt-get install -y python3-rpm
+      - name: Validate notification and select target
+        id: release
+        run: /usr/bin/python3 .github/scripts/update_release.py resolve
+      - name: Check out package branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.release.outputs.branch }}
+          path: source
+      - name: Update version and changelog
+        id: update
+        run: /usr/bin/python3 .github/scripts/update_release.py update --root source
+        env:
+          PACKAGE: ${{ steps.release.outputs.package }}
+          VERSION: ${{ steps.release.outputs.version }}
+      - name: Commit and push update
+        id: commit
+        if: steps.update.outputs.changed == 'true'
+        working-directory: source
+        env:
+          PACKAGE: ${{ steps.release.outputs.package }}
+          VERSION: ${{ steps.release.outputs.version }}
+          BRANCH: ${{ steps.release.outputs.branch }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- '*.spec'
+          git commit -m "chore(${PACKAGE}): update to ${VERSION}"
+          git push origin "HEAD:refs/heads/${BRANCH}"
+          echo "commit=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
+  zotero:
+    needs: update
+    if: needs.update.outputs.changed == 'true' && needs.update.outputs.package == 'zotero'
+    uses: ./.github/workflows/zotero.yml
+    with:
+      commit: ${{ needs.update.outputs.commit }}
+    secrets: inherit
+
+  xpadneo:
+    needs: update
+    if: needs.update.outputs.changed == 'true' && needs.update.outputs.package == 'xpadneo'
+    uses: ./.github/workflows/xpadneo.yml
+    with:
+      commit: ${{ needs.update.outputs.commit }}
+    secrets: inherit
+
+  aegisub:
+    needs: update
+    if: needs.update.outputs.changed == 'true' && needs.update.outputs.package == 'aegisub'
+    uses: ./.github/workflows/aegisub.yml
+    with:
+      commit: ${{ needs.update.outputs.commit }}
+    secrets: inherit

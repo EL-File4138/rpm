@@ -1,5 +1,14 @@
 name: xpadneo
 on:
+  workflow_call:
+    inputs:
+      commit:
+        description: Packaging commit to build
+        required: true
+        type: string
+    secrets:
+      COPR_CLI_CONFIG:
+        required: true
   workflow_dispatch:
   push:
     branches:
@@ -22,6 +31,7 @@ jobs:
             build_dir: xpadneo/xpadneo-kmod
             spec_file: xpadneo-kmod.spec
     env:
+      BUILD_COMMIT: ${{ inputs.commit || github.sha }}
       COPR_CLI_CONFIG: ${{secrets.COPR_CLI_CONFIG}}
       BUILD_REPO: el-file4138/xpadneo
     steps:
@@ -36,4 +46,4 @@ jobs:
       - name: Build
         id: build
         run: |
-          copr-cli --config <(printf '%s' "${COPR_CLI_CONFIG}") buildscm --clone-url "https://github.com/${{github.repository}}" --commit "${{github.sha}}" --subdir "${{ matrix.build_dir }}" --spec "${{ matrix.spec_file }}" --type git --method rpkg "${BUILD_REPO}" | sed -n 's/^Created builds: /build_id=/p' | tr -d ',' >> "${GITHUB_OUTPUT}"
+          copr-cli --config <(printf '%s' "${COPR_CLI_CONFIG}") buildscm --clone-url "https://github.com/${{github.repository}}" --commit "${BUILD_COMMIT}" --subdir "${{ matrix.build_dir }}" --spec "${{ matrix.spec_file }}" --type git --method rpkg "${BUILD_REPO}" | sed -n 's/^Created builds: /build_id=/p' | tr -d ',' >> "${GITHUB_OUTPUT}"
