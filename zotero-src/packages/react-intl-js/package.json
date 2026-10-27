@@ -1,0 +1,8 @@
+{
+  "name": "react-intl-rpm-build-dependencies",
+  "version": "3.12.1",
+  "private": true,
+  "dependencies": {
+    "pegjs": "0.10.0"
+  }
+}

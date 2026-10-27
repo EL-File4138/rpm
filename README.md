@@ -15,6 +15,7 @@ Updates run one at a time, with up to 100 pending runs queued through
 | Package | Target branch | Specs updated |
 | --- | --- | --- |
 | `zotero` | `master` | `zotero/zotero.spec` |
+| `zotero-src` | `master` | `zotero-src/zotero.spec` (reviewed source inputs required) |
 | `xpadneo` | `master` | Both xpadneo and xpadneo-kmod specs |
 | `aegisub` | `aegisub-next` | `aegisub/aegisub.spec` |
 
@@ -55,6 +56,15 @@ repository's default branch before sending events. The sender needs a token with
 repository Contents write permission. The workflow uses its own `GITHUB_TOKEN`
 to push; repository rules must permit those pushes to the target branches.
 Configure the existing `COPR_CLI_CONFIG` secret for builds.
+
+`zotero` repackages upstream binaries and targets `el-file4138/zotero`.
+`zotero-src` is a conflicting alternative built from source in
+`el-file4138/zotero-src`, with separate Fedora 44 and Rawhide entry specs. Its
+workflow stages checksum-pinned release inputs and overlays current packaging.
+Before advancing a source release, prepare and review its recursive source pins,
+offline archives and `zotero-src/sources/release-inputs.json`. An unattended
+Version-only source update is rejected rather than rebuilding old code under a
+new version. The two release events and Copr projects are independent.
 
 If a push fails due to a concurrent branch update, rerun the workflow.
 If a build fails after a successful push, rerun the failed jobs

@@ -1,0 +1,11 @@
+[Desktop Entry]
+Name=Zotero
+Comment=Collect, organize, cite, and share research
+Exec=zotero %U
+Icon=zotero
+Type=Application
+Terminal=false
+Categories=Office;Literature;
+MimeType=x-scheme-handler/zotero;application/x-research-info-systems;application/x-endnote-refer;application/x-bibtex;text/x-bibtex;application/ris;
+StartupNotify=true
+StartupWMClass=Zotero

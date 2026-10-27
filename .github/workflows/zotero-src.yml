@@ -1,0 +1,50 @@
+name: zotero-src
+on:
+  workflow_call:
+    inputs:
+      commit:
+        required: true
+        type: string
+    secrets:
+      COPR_CLI_CONFIG:
+        required: true
+  workflow_dispatch:
+  push:
+    branches: [master]
+    paths: [zotero-src/**, .github/workflows/zotero-src.yml]
+permissions:
+  contents: read
+jobs:
+  copr:
+    runs-on: ubuntu-latest
+    container: fedora:44
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: f44
+            chroot: fedora-44-x86_64
+          - target: rawhide
+            chroot: fedora-rawhide-x86_64
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.commit || github.sha }}
+          persist-credentials: false
+      - name: Install source packaging tools
+        run: dnf -y install python3 rpm-build cpio copr-cli
+      - name: Stage reviewed release and build source RPM
+        run: python3 zotero-src/sources/stage-release.py --target "$TARGET" --output "$GITHUB_WORKSPACE/srpms"
+        env:
+          TARGET: ${{ matrix.target }}
+      - name: Submit clean source build
+        shell: bash
+        run: |
+          config=$(mktemp)
+          trap 'rm -f "$config"' EXIT
+          chmod 600 "$config"
+          printf '%s' "$COPR_CLI_CONFIG" > "$config"
+          copr-cli --config "$config" build --nowait --timeout 36000 -r "$CHROOT" el-file4138/zotero-src srpms/*.src.rpm
+        env:
+          COPR_CLI_CONFIG: ${{ secrets.COPR_CLI_CONFIG }}
+          CHROOT: ${{ matrix.chroot }}

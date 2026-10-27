@@ -61,6 +61,16 @@ class UpdateReleaseTests(unittest.TestCase):
         for relative in release.PACKAGES["xpadneo"][1]:
             self.assertEqual(release.field((self.root / relative).read_text(), "Version")[2], "99.0")
 
+    def test_source_release_requires_prepared_inputs(self):
+        before = self.snapshot()
+        with self.assertRaises((ValueError, FileNotFoundError)):
+            release.update_specs(self.root, "zotero-src", "99.0")
+        self.assertEqual(before, self.snapshot())
+        directory = self.root / 'zotero-src/sources'
+        directory.mkdir()
+        (directory / 'release-inputs.json').write_text('{"version":"99.0"}')
+        self.assertTrue(release.update_specs(self.root, "zotero-src", "99.0"))
+
     def test_aegisub_preserves_automatic_release_and_changelog(self):
         path = self.root / "aegisub/aegisub.spec"
         original = path.read_text()

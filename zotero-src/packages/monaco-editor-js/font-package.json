@@ -1,0 +1,9 @@
+{
+  "name": "codicon-rpm-build-dependencies",
+  "version": "0.0.35",
+  "private": true,
+  "dependencies": {
+    "fantasticon": "1.2.3",
+    "svgo": "2.7.0"
+  }
+}

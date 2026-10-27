@@ -1,0 +1,20 @@
+--- a/third_party/llvm-project/dwarf2yaml.cpp
++++ b/third_party/llvm-project/dwarf2yaml.cpp
+@@ -49,7 +49,7 @@ void dumpDebugAbbrev(DWARFContext &DCtx, DWARFYAML::Data &Y) {
+       // DeclSets from each other, and to null-terminate the entire list
+       // (LLVM works with or without this, but other decoders may error, see
+       //  https://bugs.llvm.org/show_bug.cgi?id=44511).
+-      DWARFYAML::Abbrev Abbrv;
++      DWARFYAML::Abbrev Abbrv{};
+       Abbrv.Code = 0;
+       Abbrv.Tag = dwarf::Tag(0);
+       Y.AbbrevDecls.push_back(Abbrv);
+@@ -189,7 +189,7 @@ void dumpDebugPubSections(DWARFContext &DCtx, DWARFYAML::Data &Y) {
+ 
+ void dumpDebugInfo(DWARFContext &DCtx, DWARFYAML::Data &Y) {
+   for (const auto &CU : DCtx.compile_units()) {
+-    DWARFYAML::Unit NewUnit;
++    DWARFYAML::Unit NewUnit{};
+     NewUnit.Length.setLength(CU->getLength());
+     NewUnit.Version = CU->getVersion();
+     if(NewUnit.Version >= 5)

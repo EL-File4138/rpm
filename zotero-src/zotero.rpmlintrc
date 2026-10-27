@@ -1,0 +1,3 @@
+# Authentic upstream GPL/LGPL texts retain historical FSF postal addresses.
+# Keep these texts intact; this exception does not cover other files or errors.
+addFilter(r'^zotero\.x86_64: E: incorrect-fsf-address /usr/share/licenses/zotero/rpm-licenses/(?:pdf-liberation-fonts/COPYING|tinymce/license\.txt|tinymce/paste-LICENSE\.TXT)$')

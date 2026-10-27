@@ -1,0 +1,10 @@
+{
+  "name": "ace-rpm-build-dependencies",
+  "version": "1.4.12",
+  "private": true,
+  "dependencies": {
+    "architect-build": "https://codeload.github.com/c9/architect-build/tar.gz/43a6fdeffe05efdf3be2bf6ad73acd3f9f1c10d0",
+    "jshint": "2.13.6",
+    "events": "3.3.0"
+  }
+}

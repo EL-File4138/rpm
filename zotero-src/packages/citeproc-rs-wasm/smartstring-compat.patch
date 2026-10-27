@@ -1,0 +1,9 @@
+diff --git a/rpm-lazy-transform-str/Cargo.toml b/rpm-lazy-transform-str/Cargo.toml
+--- a/rpm-lazy-transform-str/Cargo.toml
++++ b/rpm-lazy-transform-str/Cargo.toml
+@@ -33,4 +33,4 @@
+ [dependencies.smartstring]
+-version = "0.2.3"
++version = "1.0.1"
+ [dev-dependencies.cargo-husky]
+ version = "1.5.0"

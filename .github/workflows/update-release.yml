@@ -9,7 +9,7 @@ on:
         description: Package to update
         required: true
         type: choice
-        options: [zotero, xpadneo, aegisub]
+        options: [zotero, zotero-src, xpadneo, aegisub]
       version:
         description: Upstream version (optional leading v)
         required: true
@@ -80,6 +80,14 @@ jobs:
     needs: update
     if: needs.update.outputs.changed == 'true' && needs.update.outputs.package == 'xpadneo'
     uses: ./.github/workflows/xpadneo.yml
+    with:
+      commit: ${{ needs.update.outputs.commit }}
+    secrets: inherit
+
+  zotero-src:
+    needs: update
+    if: needs.update.outputs.changed == 'true' && needs.update.outputs.package == 'zotero-src'
+    uses: ./.github/workflows/zotero-src.yml
     with:
       commit: ${{ needs.update.outputs.commit }}
     secrets: inherit

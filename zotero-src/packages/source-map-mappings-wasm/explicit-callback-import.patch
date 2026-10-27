@@ -1,0 +1,10 @@
+--- a/wasm-mappings/source-map-mappings-wasm-api/src/lib.rs
++++ b/wasm-mappings/source-map-mappings-wasm-api/src/lib.rs
+@@ -251,6 +251,7 @@
+     mappings.as_mut().unwrap()
+ }
+ 
++#[link(wasm_import_module = "env")]
+ extern "C" {
+     fn mapping_callback(
+         // These two parameters are always valid.

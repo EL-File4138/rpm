@@ -12,6 +12,7 @@ import rpm
 
 PACKAGES = {
     "zotero": ("master", ("zotero/zotero.spec",)),
+    "zotero-src": ("master", ("zotero-src/zotero.spec",)),
     "xpadneo": (
         "master",
         ("xpadneo/xpadneo/xpadneo.spec", "xpadneo/xpadneo-kmod/xpadneo-kmod.spec"),
@@ -60,6 +61,16 @@ def field(text, name):
 
 def update_specs(root, package, version):
     version = normalize_version(package, version)
+    if package == "zotero-src":
+        # Source releases require reviewed recursive pins and offline archives;
+        # changing Version alone would silently build the previous source tree.
+        current = field((root / PACKAGES[package][1][0]).read_text(), "Version")[2]
+        if rpm.labelCompare(("0", version, "0"), ("0", current, "0")) <= 0:
+            return False
+        import json
+        manifest = json.loads((root / "zotero-src/sources/release-inputs.json").read_text())
+        if manifest["version"] != version:
+            raise ValueError("Source release inputs must be prepared and reviewed before updating Version")
     updates = []
     for relative in PACKAGES[package][1]:
         path = root / relative

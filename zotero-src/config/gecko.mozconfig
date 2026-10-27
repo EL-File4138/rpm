@@ -1,0 +1,37 @@
+ac_add_options --enable-application=browser
+ac_add_options --disable-bootstrap
+ac_add_options --disable-updater
+ac_add_options --disable-crashreporter
+ac_add_options --disable-tests
+ac_add_options --disable-debug
+# Retain source/line information for RPM debugsource with limited build memory.
+ac_add_options --enable-debug-symbols=-g1
+# Leave ELF symbols intact for RPM's debuginfo extraction and stripping.
+ac_add_options --disable-install-strip
+ac_add_options --disable-lto
+ac_add_options --disable-cargo-incremental
+ac_add_options --disable-unified-build
+ac_add_options --disable-elf-hack
+ac_add_options --enable-linker=lld
+ac_add_options --with-libclang-path="${LIBCLANG_PATH:-/usr/lib64}"
+ac_add_options --with-system-nss
+ac_add_options --with-system-nspr
+ac_add_options --with-system-zlib
+ac_add_options --with-system-ffi
+ac_add_options --with-system-jpeg
+ac_add_options --with-system-libvpx
+ac_add_options --with-system-webp
+ac_add_options --with-system-pixman
+ac_add_options --with-system-libevent
+ac_add_options --with-system-libdrm
+ac_add_options --with-system-gbm
+ac_add_options --with-system-pipewire
+ac_add_options --with-wasi-sysroot=/usr/wasm32-wasi
+export CC=clang
+export CXX=clang++
+export AR=llvm-ar
+export NM=llvm-nm
+export RANLIB=llvm-ranlib
+# Fedora's WASI sysroot uses the legacy target name deprecated by Clang 22.
+export WASM_CC="clang -Wno-deprecated"
+export WASM_CXX="clang++ -Wno-deprecated"
