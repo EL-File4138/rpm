@@ -1,17 +1,17 @@
 %global         gituser         arch1t3cht
 %global         gitname         Aegisub
-%global         commit          56a83402b93cdb2347848b744f5fdfe89ee51d56
+%global         commit          aff013f45d1aeb5ac6d3f6ea9c972278d29eb777
 %global         shortcommit     %(c=%{commit}; echo ${c:0:8})
-%global         gitdate         20260711
+%global         gitdate         20261018
+%global         upstream_tag    migration06-01
 
 Name:           aegisub
-Version:        3.4.9.%{gitdate}
+Version:        3.5.1.%{gitdate}
 Release:        1%{?dist}
 Summary:        Tool for creating and modifying subtitles
-License:        BSD and MIT and MPLv1.1
+License:        BSD-3-Clause AND ISC AND MIT
 URL:            https://github.com/%{gituser}/%{gitname}
 
-# Placebo: Requires standard dist tarball, generate via `meson dist --include-subprojects -C build` upstream.
 Source0:        %{url}/archive/%{commit}/%{gitname}-%{shortcommit}.tar.gz
 
 ExcludeArch:    %{power64} %{ix86} %{arm}
@@ -59,8 +59,24 @@ This is arch1t3cht's fork, and is actively following for the most recent develop
 that has a CI success.
 
 %prep
-# Requires standard dist tarball, generate via `meson dist --include-subprojects -C build` upstream.
-%autosetup -n %{gitname}-%{shortcommit} -p1
+%autosetup -n %{gitname}-%{commit} -p1
+
+# GitHub archives lack the cached version header normally supplied by meson dist.
+# Use revision 0, as upstream does when Git history is unavailable.
+cat > git_version.h <<'EOF'
+#define BUILD_GIT_VERSION_NUMBER 0
+#define BUILD_GIT_VERSION_STRING "%{upstream_tag}"
+#define TAGGED_RELEASE 1
+#define INSTALLER_VERSION "0.0.0"
+#define RESOURCE_BASE_VERSION 0, 0, 0
+EOF
+
+# Keep only the required bundled luabins; all other dependencies are system libraries.
+find subprojects/ -mindepth 1 -depth ! -path "subprojects/luabins*" -exec rm -rv {} +
+# Remove unused platform packaging containing GPL code and developer documentation.
+rm -rv packages/{osx_bundle,osx_dmg,win_installer}
+rm -rv tools/{osx-*,*.ps1}
+rm -rv docs/
 
 %build
 %meson -Denable_update_checker=false
@@ -86,6 +102,10 @@ appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/org.%{name}.%{
 %license LICENCE
 
 %changelog
+* Thu Oct 29 2026 Matrew File <elfile4138@elfile4138.moe> - 3.5.1.20261018-1
+- Update to Migration Release 06, based on Aegisub 3.5.1.
+- Fix archive extraction and supply version metadata for builds without Git.
+- Remove unused bundled dependencies and platform packaging; update license.
 * Sat Jul 11 2026 Matrew File <elfile4138@elfile4138.moe> - 3.4.9.20260711-1
 - Update to upstream Migration Release 04 Build.
 * Fri May 29 2026 Matrew File <elfile4138@elfile4138.moe> - 3.4.9.20260529-1
