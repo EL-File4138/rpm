@@ -3,6 +3,7 @@
 import importlib.util
 import json
 from pathlib import Path
+import subprocess
 import tempfile
 import unittest
 from unittest.mock import patch
@@ -23,6 +24,21 @@ extension = load('extension', 'zotero-libreoffice-integration', 'prepare-extensi
 
 
 class ComponentPreparationTest(unittest.TestCase):
+    def test_openjpeg_disables_relaxed_simd_in_both_build_stages(self):
+        prep = (ROOT / 'spec/components-prep.inc').read_text()
+        command = next(line for line in prep.splitlines()
+                       if line.startswith('sed ') and '-mno-relaxed-simd' in line)
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            wrapper = root / 'openjpeg-wrapper'
+            wrapper.mkdir()
+            for name in ('compile.sh', 'compile_lib.sh'):
+                (wrapper / name).write_text('CFLAGS="-O3 -msimd128 -msse -mrelaxed-simd"\n')
+            subprocess.run(['sh', '-ec', command], cwd=root, check=True)
+            for script in wrapper.iterdir():
+                self.assertIn('-msimd128 -msse -mno-relaxed-simd', script.read_text())
+                self.assertNotIn(' -mrelaxed-simd', script.read_text())
+
     def test_loader_preserves_bootstrap_without_node_guards(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)

@@ -1,11 +1,11 @@
-%global gecko_version 140.15.0
-%global source_commit 80bc5565e000c3f24c37e0020713a41ec9f42e09
+%global gecko_version 140.17.0
+%global source_commit 35429ad62024032e0888b6cc1b6b51f96f8a8f1d
 %global __provides_exclude_from ^%{_libdir}/zotero/.*$
 %global __requires_exclude ^(libclearkey|liblgpllibs|libmozavcodec|libmozavutil|libmozgtk|libmozsandbox|libmozsqlite3|libmozwayland|libxul|libgkcodecs)\.so.*$
 
 Name:           zotero-src
-Version:        10.0.3
-Release:        2%{?dist}
+Version:        10.0.7
+Release:        1%{?dist}
 Summary:        Zotero desktop application
 
 License:        AGPL-3.0-only AND GPL-3.0-only AND MPL-2.0 AND LGPL-2.1-only AND MIT AND Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND ISC AND BSL-1.0 AND Zlib AND W3C AND Unicode-3.0 AND Unicode-DFS-2016 AND CC-BY-4.0 AND CC-BY-SA-3.0 AND CC0-1.0 AND OFL-1.1 AND Knuth-CTAN AND LicenseRef-Rsfs AND LicenseRef-Liberation AND (Apache-2.0 WITH LLVM-exception)
@@ -666,6 +666,11 @@ test ! -e %{buildroot}%{_libdir}/zotero/updater
 %{_datadir}/zotero-libreoffice-integration/
 
 %changelog
+* Sat Oct 31 2026 Matrew File <elfile4138@elfile4138.moe> - 10.0.7-1
+- Update Zotero to 10.0.7 and Gecko to 140.17.0 ESR.
+- Build the OpenJPEG decoder without Relaxed SIMD for Gecko 140 compatibility.
+- Include Document inline definitions in non-unified Gecko pointer-lock builds.
+
 * Sat Oct 24 2026 Matrew File <elfile4138@elfile4138.moe> - 10.0.3-2
 - Separate source and binary-repack packages with target-specific entry points.
 - Select coinstallable LLVM and Binaryen toolchains on Rawhide.

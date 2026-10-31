@@ -239,6 +239,7 @@ class CompatibilityTest(unittest.TestCase):
                     '    if debug_symbols:\n        debug_info = "2"\n',
                 "config/makefiles/rust.mk":
                     "cargo_rustc_flags += -Clto$(if $(filter full,$(MOZ_LTO_RUST_CROSS)),=fat)\n",
+                "dom/base/PointerLockManager.cpp": '#include "mozilla/dom/Document.h"\n',
             }
             for name, contents in fixtures.items():
                 path = root / name
@@ -255,6 +256,8 @@ class CompatibilityTest(unittest.TestCase):
             self.assertEqual(before, {name: (root / name).read_bytes() for name in fixtures})
             self.assertIn(b"cursor.definition()", before[next(iter(fixtures))])
             self.assertIn(b"PermissionMessageUtils.h", before[list(fixtures)[2]])
+            self.assertIn(b'#include "mozilla/dom/DocumentInlines.h"',
+                          before["dom/base/PointerLockManager.cpp"])
             self.assertIn(b"#include <spa/pod/iter.h>", before[list(fixtures)[5]])
             compiler = shutil.which("clang++")
             if compiler:

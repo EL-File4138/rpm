@@ -311,6 +311,9 @@ patch -d openjpeg -p1 < openjpeg-wrapper/0001-Add-support-for-buffer-based-strea
 patch -d quickjs -p1 < quickjs-wrapper/0001-Extra-stuff-for-use-with-PDF.js.patch
 # Use the caller's writable cache and omit optional Closure minification.
 sed -i 's|export EM_CACHE=.*|export EM_CACHE|' openjpeg-wrapper/compile*.sh
+# Gecko 140 cannot compile Relaxed SIMD; otherwise PDF.js silently uses JS.
+# Disable it in both the decoder library and its JavaScript/WASM wrapper.
+sed -i 's/-mrelaxed-simd/-mno-relaxed-simd/g' openjpeg-wrapper/compile*.sh
 sed -i 's/--closure 1/--closure 0/' quickjs-wrapper/compile.sh
 tar -xJf %{SOURCE173} -C qcms-wrapper
 cp "$component_tools/pdfjs-codecs/Cargo.lock" qcms-wrapper/Cargo.lock

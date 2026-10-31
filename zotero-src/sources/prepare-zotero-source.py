@@ -14,8 +14,8 @@ import tarfile
 import tempfile
 
 
-COMMIT = "80bc5565e000c3f24c37e0020713a41ec9f42e09"
-VERSION = "10.0.3"
+COMMIT = "35429ad62024032e0888b6cc1b6b51f96f8a8f1d"
+VERSION = "10.0.7"
 EXCLUDED = {
     "app/modules/zotero-word-for-mac-integration",
     "app/modules/zotero-word-for-windows-integration",

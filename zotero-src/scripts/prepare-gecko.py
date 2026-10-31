@@ -62,6 +62,10 @@ def prepare_compatibility(source):
     replace_source(protocol, 'include "mozilla/dom/ReferrerInfoUtils.h";',
                    'include "mozilla/dom/PermissionMessageUtils.h";\n'
                    'include "mozilla/dom/ReferrerInfoUtils.h";')
+    replace_source(source / "dom/base/PointerLockManager.cpp",
+                   '#include "mozilla/dom/Document.h"',
+                   '#include "mozilla/dom/Document.h"\n'
+                   '#include "mozilla/dom/DocumentInlines.h"')
     transform = source / "gfx/skia/skia/modules/skcms/src/Transform_inl.h"
     # Use the public intrinsic rather than Clang's removed internal builtin.
     replace_source(transform,
