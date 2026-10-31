@@ -5,7 +5,7 @@
 
 Name:           zotero-src
 Version:        10.0.7
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        Zotero desktop application
 
 License:        AGPL-3.0-only AND GPL-3.0-only AND MPL-2.0 AND LGPL-2.1-only AND MIT AND Apache-2.0 AND BSD-2-Clause AND BSD-3-Clause AND ISC AND BSL-1.0 AND Zlib AND W3C AND Unicode-3.0 AND Unicode-DFS-2016 AND CC-BY-4.0 AND CC-BY-SA-3.0 AND CC0-1.0 AND OFL-1.1 AND Knuth-CTAN AND LicenseRef-Rsfs AND LicenseRef-Liberation AND (Apache-2.0 WITH LLVM-exception)
@@ -69,6 +69,9 @@ Source35:       spec/components-build.inc
 Source36:       spec/components-check.inc
 # GPL version 3 is selected for GPL-2.0-or-later/GPL-3.0-or-later translators.
 Source37:       https://raw.githubusercontent.com/spdx/license-list-data/v3.27.0/text/GPL-3.0-only.txt
+# Mozilla Remote Settings OneCRL snapshot (timestamp 1793208925525).
+# https://firefox.settings.services.mozilla.com/v1/buckets/security-state/collections/onecrl/changeset?_expected=0
+Source38:       sources/onecrl-changeset.json
 %include %{SOURCE32}
 %include %{SOURCE33}
 
@@ -307,6 +310,7 @@ using Fedora's Java libraries rather than copies embedded in the extension.
 
 %prep
 %setup -q -n zotero-%{version} -b 1 -a 2
+cp %{SOURCE38} .rpm-onecrl.json
 mkdir -p .rpm-original-sources/{fluent-bundle,fluent-react,darkreader,sentencex-ts,fflate,fastest-levenshtein,sorted-btree,tinymce}
 tar -xf %{SOURCE15} --strip-components=1 -C .rpm-original-sources/fluent-bundle
 tar -xf %{SOURCE16} --strip-components=1 -C .rpm-original-sources/fluent-react
@@ -620,7 +624,12 @@ cmp note-editor/node_modules/@benrbray/prosemirror-math/LICENSE \
 from pathlib import Path
 from zipfile import ZipFile
 import hashlib
+import json
 with ZipFile("%{buildroot}%{_libdir}/zotero/app/omni.ja") as archive:
+    onecrl = json.loads(Path(".rpm-onecrl.json").read_text())
+    assert onecrl["changes"], "OneCRL snapshot must not be empty"
+    assert json.loads(archive.read("defaults/settings/security-state/onecrl.json")) == {
+        "data": onecrl["changes"], "timestamp": onecrl["timestamp"]}
     packaged = archive.read("chrome/devtools/modules/devtools/client/shared/vendor/source-map/lib/mappings.wasm")
     assert packaged == Path(".rpm-components/data/source-map-mappings-wasm/mappings.wasm").read_bytes()
     fonts = {path.name: path.read_bytes() for path in Path(".rpm-components/data/katex-js/fonts").glob("*.woff2")}
@@ -666,6 +675,9 @@ test ! -e %{buildroot}%{_libdir}/zotero/updater
 %{_datadir}/zotero-libreoffice-integration/
 
 %changelog
+* Sat Oct 31 2026 Matrew File <elfile4138@elfile4138.moe> - 10.0.7-2
+- Bundle the Mozilla OneCRL snapshot for offline application assembly.
+
 * Sat Oct 31 2026 Matrew File <elfile4138@elfile4138.moe> - 10.0.7-1
 - Update Zotero to 10.0.7 and Gecko to 140.17.0 ESR.
 - Build the OpenJPEG decoder without Relaxed SIMD for Gecko 140 compatibility.

@@ -123,6 +123,9 @@ def prepare(root, data):
 		check_lfs_file "$CALLDIR/linux/updater.tar.xz"
 		tar xf "$CALLDIR/linux/updater.tar.xz" --to-stdout updater-$arch > "$APPDIR/updater"
 		chmod 755 "$APPDIR/updater"''', "\t\t# Application updates are managed by RPM.")
+    replace(root / "app/scripts/fetch_onecrl",
+            'curl -sSf --retry 3 "$URL" -o "$tmp_file"',
+            'cp "$(dirname "$0")/../../.rpm-onecrl.json" "$tmp_file"')
     replace(root / "reader/pdfjs/build", "npm ci\n", "# Dependencies were installed offline by the RPM build.\n")
     replace(root / "js-build/js.js", "os.cpus().length", "1")
     build = root / "js-build/build.js"
