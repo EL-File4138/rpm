@@ -1,0 +1,76 @@
+From 3decd3b1f0cbb3a035f72e9eade42279d0507b89 Mon Sep 17 00:00:00 2001
+From: Gerhard Sittig <gerhard.sittig@gmx.net>
+Date: Tue, 3 Nov 2020 18:25:18 +0100
+Subject: [PATCH] driver_list: unbreak list of builtin drivers for LTO
+ configurations
+
+Check for the availability of the "no_reorder" linker attribute, which
+keeps the list of builtin drivers in shape on LTO enabled build setups.
+Keep backwards compatibility for platforms which lack support for the
+"no_reorder" attribute. Phrase the implementation such that other
+keywords as well as user provided external specs are possible.
+
+This resolves bug #1433.
+
+Submitted-By: Ivan Mironov <mironov.ivan@gmail.com>
+---
+ src/driver_list_start.c  |  1 +
+ src/driver_list_stop.c   |  1 +
+ src/libsigrok-internal.h | 10 ++++++++++
+ 3 files changed, 12 insertions(+)
+
+diff --git a/src/driver_list_start.c b/src/driver_list_start.c
+index 7b6c7755..535e3312 100644
+--- a/src/driver_list_start.c
++++ b/src/driver_list_start.c
+@@ -28,6 +28,7 @@
+  */
+ 
+ SR_PRIV const struct sr_dev_driver *sr_driver_list__start[]
++	SR_DRIVER_LIST_NOREORDER
+ 	__attribute__((section (SR_DRIVER_LIST_SECTION),
+ 		       used, aligned(sizeof(struct sr_dev_driver *))))
+   = { NULL /* Dummy item, as zero length arrays are not allowed by C99 */ };
+diff --git a/src/driver_list_stop.c b/src/driver_list_stop.c
+index ff2c51de..eefda055 100644
+--- a/src/driver_list_stop.c
++++ b/src/driver_list_stop.c
+@@ -28,6 +28,7 @@
+  */
+ 
+ SR_PRIV const struct sr_dev_driver *sr_driver_list__stop[]
++	SR_DRIVER_LIST_NOREORDER
+ 	__attribute__((section (SR_DRIVER_LIST_SECTION),
+ 		       used, aligned(sizeof(struct sr_dev_driver *))))
+   = { NULL /* Dummy item, as zero length arrays are not allowed by C99 */ };
+diff --git a/src/libsigrok-internal.h b/src/libsigrok-internal.h
+index 98d1631e..19fcccfd 100644
+--- a/src/libsigrok-internal.h
++++ b/src/libsigrok-internal.h
+@@ -967,6 +967,15 @@ static inline void write_dblle_inc(uint8_t **p, double x)
+ #define SR_DRIVER_LIST_SECTION "__sr_driver_list"
+ #endif
+ 
++#if !defined SR_DRIVER_LIST_NOREORDER && defined __has_attribute
++#if __has_attribute(no_reorder)
++#define SR_DRIVER_LIST_NOREORDER __attribute__((no_reorder))
++#endif
++#endif
++#if !defined SR_DRIVER_LIST_NOREORDER
++#define SR_DRIVER_LIST_NOREORDER /* EMPTY */
++#endif
++
+ /**
+  * Register a list of hardware drivers.
+  *
+@@ -996,6 +1005,7 @@ static inline void write_dblle_inc(uint8_t **p, double x)
+  */
+ #define SR_REGISTER_DEV_DRIVER_LIST(name, ...) \
+ 	static const struct sr_dev_driver *name[] \
++		SR_DRIVER_LIST_NOREORDER \
+ 		__attribute__((section (SR_DRIVER_LIST_SECTION), used, \
+ 			aligned(sizeof(struct sr_dev_driver *)))) \
+ 		= { \
+-- 
+2.26.2
+
