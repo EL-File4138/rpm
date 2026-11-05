@@ -2,9 +2,10 @@
 %global forgeurl https://github.com/atar-axis/xpadneo
 
 Name: xpadneo
-Version: 0.10.1
+Version: 0.10.5
 Release: 1%{?dist}
 Summary: Advanced linux driver for Xbox One Wireless Gamepad
+BuildArch: noarch
 
 %forgemeta
 
@@ -31,12 +32,19 @@ Advanced Linux Driver for Xbox One Wireless Controller (shipped with Xbox One S)
 %install
 install -Dpm 0644 hid-xpadneo/etc-modprobe.d/xpadneo.conf %{buildroot}%{_modprobedir}/xpadneo.conf
 install -Dpm 0644 hid-xpadneo/etc-udev-rules.d/60-xpadneo.rules %{buildroot}%{_udevrulesdir}/60-xpadneo.rules
+install -Dpm 0644 hid-xpadneo/etc-udev-rules.d/70-xpadneo-disable-hidraw.rules %{buildroot}%{_udevrulesdir}/70-xpadneo-disable-hidraw.rules
 
 %files
 %{_modprobedir}/xpadneo.conf
 %{_udevrulesdir}/60-xpadneo.rules
+%{_udevrulesdir}/70-xpadneo-disable-hidraw.rules
 
 %changelog
+* Thu Nov 05 2026 Matrew File <elfile4138@elfile4138.moe> - 0.10.5-1
+- Update to version 0.10.5
+- Package the hidraw access udev rule
+- Mark the configuration-only package as noarch
+
 * Thu Apr 02 2026 Matrew File <elfile4138@elfile4138.moe> - 0.10.1-1
 - Update to version 0.10.1
 * Fri Jul 16 2021 Dorian Stoll <dorian.stoll@tmsp.io> - 0.9.1-1

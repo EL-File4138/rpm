@@ -3,7 +3,7 @@
 %global forgeurl https://github.com/atar-axis/xpadneo
 
 Name: xpadneo-kmod
-Version: 0.10.1
+Version: 0.10.5
 Release: 1%{?dist}
 Summary: Advanced linux driver for Xbox One Wireless Gamepad
 
@@ -58,6 +58,9 @@ done
 %{?akmod_install}
 
 %changelog
+* Thu Nov 05 2026 Matrew File <elfile4138@elfile4138.moe> - 0.10.5-1
+- Update to version 0.10.5
+
 * Thu Apr 02 2026 Matrew File <elfile4138@elfile4138.moe> - 0.10.1-1
 - Update to version 0.10.1
 * Fri Jul 16 2021 Dorian Stoll <dorian.stoll@tmsp.io> - 0.9.1-1
