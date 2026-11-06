@@ -3,7 +3,7 @@
 %global __provides_exclude_from ^%{_libdir}/%{name}/.*$
 
 Name:		zotero
-Version:	10.0.7
+Version:	10.0.8
 Release:	1%{?dist}
 Summary:	Zotero desktop application
 
@@ -80,6 +80,9 @@ PY
 %{_datadir}/icons/hicolor/symbolic/apps/zotero-symbolic.svg
 
 %changelog
+* Fri Nov 06 2026 github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> - 10.0.8-1
+- Update to version 10.0.8.
+
 * Thu Oct 29 2026 github-actions[bot] <41898282+github-actions[bot]@users.noreply.github.com> - 10.0.7-1
 - Update to version 10.0.7.
 
